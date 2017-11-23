@@ -11,6 +11,7 @@
 import Foundation
 import KalturaNetKit
 import PlayKit
+import PlayKitUtils
 
 /// class `BaseOTTAnalyticsPlugin` is a base plugin object used for OTT analytics plugin subclasses
 public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, AppStateObservable {
@@ -193,7 +194,7 @@ extension BaseOTTAnalyticsPlugin {
         // media hit should fire on every time we start the timer.
         self.sendProgressEvent()
         
-        self.timer = Timer.every(self.interval) { [weak self] in
+        self.timer = PKTimer.every(self.interval) { [weak self] timer in
             PKLog.debug("timerHit")
             self?.sendProgressEvent()
         }
