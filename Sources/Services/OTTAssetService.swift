@@ -14,7 +14,7 @@ import KalturaNetKit
 
 class OTTAssetService {
 
-    internal static func getPlaybackContext(baseURL: String, ks: String, assetId: String, type: AssetObjectType, playbackContextOptions: PlaybackContextOptions) -> KalturaRequestBuilder? {
+    internal static func getPlaybackContext(baseURL: String, ks: String, assetId: String, type: AssetType, playbackContextOptions: PlaybackContextOptions) -> KalturaRequestBuilder? {
 
         if let request: KalturaRequestBuilder = KalturaRequestBuilder(url: baseURL, service: "asset", action: "getPlaybackContext") {
             request
@@ -31,7 +31,7 @@ class OTTAssetService {
 
 struct PlaybackContextOptions {
 
-    var playbackContextType: PlaybackType
+    var playbackContextType: PlaybackContextType
     var protocls: [String]
     var assetFileIds: [String]?
     var referrer: String?

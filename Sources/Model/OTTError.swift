@@ -11,16 +11,16 @@
 import UIKit
 import SwiftyJSON
 
-class OTTError: OTTBaseObject {
+public class OTTError: OTTBaseObject {
 
-    var message: String?
-    var code: String?
+    public var message: String?
+    public var code: String?
 
     let errorKey = "error"
     let messageKey = "message"
     let codeKey = "code"
 
-    required init?(json: Any) {
+    required public init?(json: Any) {
 
         let jsonObj: JSON = JSON(json)
         let errorDict = jsonObj[errorKey]
@@ -28,4 +28,10 @@ class OTTError: OTTBaseObject {
         self.code = errorDict[codeKey].string
     }
 
+}
+
+public enum OTTErrorCode: Int {
+    
+    case UserNotActivated = 2016
+    
 }

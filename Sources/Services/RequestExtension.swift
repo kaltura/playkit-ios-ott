@@ -16,7 +16,7 @@ import KalturaNetKit
 extension KalturaRequestBuilder {
     
     @discardableResult
-    internal func setOTTBasicParams() -> Self {
+    public func setOTTBasicParams() -> Self {
         self.setClientTag(clientTag: "java:16-09-10")
         self.setApiVersion(apiVersion: "3.6.1078.11798")
         return self

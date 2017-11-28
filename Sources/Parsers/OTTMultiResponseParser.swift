@@ -11,7 +11,7 @@
 import UIKit
 import SwiftyJSON
 
-class OTTMultiResponseParser: NSObject {
+public class OTTMultiResponseParser: NSObject {
 
     enum OTTMultiResponseParserError: Error {
         case typeNotFound
@@ -19,7 +19,7 @@ class OTTMultiResponseParser: NSObject {
         case notMultiResponse
     }
 
-    static func parse(data:Any) throws -> [OTTBaseObject] {
+    static public func parse(data:Any) throws -> [OTTBaseObject] {
 
         let jsonResponse = JSON(data)
         if let resultArrayJSON = jsonResponse["result"].array {

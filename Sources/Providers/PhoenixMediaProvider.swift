@@ -241,10 +241,10 @@ public enum PhoenixMediaProviderError: PKError {
     public struct LoaderInfo {
         var sessionProvider: SessionProvider
         var assetId: String
-        var assetType: AssetObjectType
+        var assetType: AssetType
         var formats: [String]?
         var fileIds: [String]?
-        var playbackContextType: PlaybackType
+        var playbackContextType: PlaybackContextType
         var networkProtocol: String
         var executor: RequestExecutor
 
@@ -271,9 +271,7 @@ public enum PhoenixMediaProviderError: PKError {
         let pr = self.networkProtocol ?? defaultProtocol
         let executor = self.executor ?? USRExecutor.shared
 
-        let assetType = self.convertAssetTyp(type: self.type)
-        let contextPlaybackContextType = self.convertPlaybackContextType(type: self.playbackContextType)
-        let loaderParams = LoaderInfo(sessionProvider: sessionProvider, assetId: assetId, assetType: assetType, formats: self.formats, fileIds: self.fileIds, playbackContextType: contextPlaybackContextType, networkProtocol: pr, executor: executor)
+        let loaderParams = LoaderInfo(sessionProvider: sessionProvider, assetId: assetId, assetType: self.type, formats: self.formats, fileIds: self.fileIds, playbackContextType: self.playbackContextType, networkProtocol: pr, executor: executor)
 
         self.startLoad(loaderInfo: loaderParams, callback: callback)
     }
@@ -486,33 +484,6 @@ public enum PhoenixMediaProviderError: PKError {
             default:
                 return .unknown
             }
-    }
-    
-    func convertAssetTyp(type: AssetType) -> AssetObjectType {
-        
-        switch type {
-        case .epg:
-            return .epg
-        case .media:
-            return .media
-        default:
-            return .unknown
-        }
-    }
-    
-    func convertPlaybackContextType(type: PlaybackContextType) -> PlaybackType {
-        switch type {
-        case .catchup:
-            return .catchup
-        case .playback:
-            return .playback
-        case .startOver:
-            return .startOver
-        case .trailer:
-            return .trailer
-        default:
-            return .unknown
-        }
     }
 
 }

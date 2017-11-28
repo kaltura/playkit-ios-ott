@@ -11,5 +11,5 @@
 import UIKit
 import PlayKit
 
-protocol OTTBaseObject: KalturaBaseObject {
+public protocol OTTBaseObject: KalturaBaseObject {
 }
