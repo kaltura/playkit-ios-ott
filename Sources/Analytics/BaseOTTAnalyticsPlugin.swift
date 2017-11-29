@@ -13,6 +13,42 @@ import KalturaNetKit
 import PlayKit
 import PlayKitUtils
 
+enum OTTAnalyticsEventType: String {
+    case hit
+    case play
+    case stop
+    case pause
+    case first_play
+    case swoosh
+    case load
+    case finish
+    case bitrateChange
+    case error
+}
+
+protocol OTTAnalyticsPluginProtocol: AnalyticsPluginProtocol {
+    
+    var intervalOn: Bool { get set }
+    var timer: Timer? { get set }
+    var interval: TimeInterval { get set }
+    
+    func sendAnalyticsEvent(ofType type: OTTAnalyticsEventType)
+    func buildRequest(ofType type: OTTAnalyticsEventType) -> Request?
+    func send(request: Request)
+}
+
+
+@objc public class OTTAnalyticsPluginConfig: NSObject {
+    
+    let baseUrl: String
+    let timerInterval: TimeInterval
+    
+    init(baseUrl: String, timerInterval: TimeInterval) {
+        self.baseUrl = baseUrl
+        self.timerInterval = timerInterval
+    }
+}
+
 /// class `BaseOTTAnalyticsPlugin` is a base plugin object used for OTT analytics plugin subclasses
 public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, AppStateObservable {
     

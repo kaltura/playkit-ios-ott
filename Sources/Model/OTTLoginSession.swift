@@ -9,15 +9,15 @@
 import UIKit
 import SwiftyJSON
 
-public class OTTLoginSession: OTTBaseObject {
+class OTTLoginSession: OTTBaseObject {
 
-    public var ks: String?
-    public var refreshToken: String?
+    internal var ks: String?
+    internal var refreshToken: String?
 
     private let ksKey = "ks"
     private let refreshTokenKey = "refreshToken"
 
-    required public init(json:Any) {
+    required init(json:Any) {
 
         let jsonObject = JSON(json)
         self.ks = jsonObject[ksKey].string

@@ -9,15 +9,26 @@
 // ===================================================================================================
 
 import UIKit
-import SwiftyJSON
 import KalturaNetKit
 import PlayKit
 
-public class TVPAPIAnalyticsPlugin: BaseOTTAnalyticsPlugin {
+@objc public class PhoenixAnalyticsPluginConfig: OTTAnalyticsPluginConfig {
     
-    public override class var pluginName: String { return "TVPAPIAnalytics" }
+    let ks: String
+    let partnerId: Int
     
-    var config: TVPAPIAnalyticsPluginConfig! {
+    @objc public init(baseUrl: String, timerInterval: TimeInterval, ks: String, partnerId: Int) {
+        self.ks = ks
+        self.partnerId = partnerId
+        super.init(baseUrl: baseUrl, timerInterval: timerInterval)
+    }
+}
+
+public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
+    
+    public override class var pluginName: String { return "PhoenixAnalytics" }
+    
+    var config: PhoenixAnalyticsPluginConfig! {
         didSet {
             self.interval = config.timerInterval
         }
@@ -25,9 +36,9 @@ public class TVPAPIAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     
     public required init(player: Player, pluginConfig: Any?, messageBus: MessageBus) throws {
         try super.init(player: player, pluginConfig: pluginConfig, messageBus: messageBus)
-        guard let config = pluginConfig as? TVPAPIAnalyticsPluginConfig else {
+        guard let config = pluginConfig as? PhoenixAnalyticsPluginConfig else {
             PKLog.error("missing/wrong plugin config")
-            throw PKPluginError.missingPluginConfig(pluginName: TVPAPIAnalyticsPlugin.pluginName)
+            throw PKPluginError.missingPluginConfig(pluginName: PhoenixAnalyticsPlugin.pluginName)
         }
         self.config = config
         self.interval = config.timerInterval
@@ -36,7 +47,7 @@ public class TVPAPIAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     public override func onUpdateConfig(pluginConfig: Any) {
         super.onUpdateConfig(pluginConfig: pluginConfig)
         
-        guard let config = pluginConfig as? TVPAPIAnalyticsPluginConfig else {
+        guard let config = pluginConfig as? PhoenixAnalyticsPluginConfig else {
             PKLog.error("plugin config is wrong")
             return
         }
@@ -50,31 +61,35 @@ public class TVPAPIAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     /************************************************************/
     
     override func buildRequest(ofType type: OTTAnalyticsEventType) -> Request? {
-        guard let player = self.player else { return nil }
+       
+        guard let player = self.player else {
+            PKLog.error("send analytics failed due to nil associated player")
+            return nil
+        }
         
         guard let mediaEntry = player.mediaEntry else {
             PKLog.error("send analytics failed due to nil mediaEntry")
             return nil
         }
         
-        let method = type == .hit ? "MediaHit" : "MediaMark"
-
-        let baseUrl = "\(self.config.baseUrl)m=\(method)"
-        
-        guard let requestBuilder: RequestBuilder = MediaMarkService.sendTVPAPIEVent(baseURL: baseUrl,
-                                                                                    initObj: self.config.initObject,
-                                                                                    eventType: type.rawValue,
+        guard let requestBuilder: KalturaRequestBuilder = BookmarkService.actionAdd(baseURL: config.baseUrl,
+                                                                                    partnerId: config.partnerId,
+                                                                                    ks: config.ks,
+                                                                                    eventType: type.rawValue.uppercased(),
                                                                                     currentTime: player.currentTime.toInt32(),
                                                                                     assetId: mediaEntry.id,
-                                                                                    fileId: self.fileId ?? "") else {
-            return nil
+                                                                                    fileId: fileId ?? "") else {
+                                                                                        return nil
         }
-        requestBuilder.set(responseSerializer: StringSerializer())
+        
         requestBuilder.set { (response: Response) in
             PKLog.trace("Response: \(response)")
             if response.statusCode == 0 {
                 PKLog.trace("\(String(describing: response.data))")
-                guard let data = response.data as? String, data.lowercased() == "\"concurrent\"" else { return }
+                guard let data = response.data as? [String: Any] else { return }
+                guard let result = data["result"] as? [String: Any] else { return }
+                guard let errorData = result["error"] as? [String: Any] else { return }
+                guard let errorCode = errorData["code"] as? Int, errorCode == 4001 else { return }
                 self.reportConcurrencyEvent()
             }
         }
@@ -82,4 +97,5 @@ public class TVPAPIAnalyticsPlugin: BaseOTTAnalyticsPlugin {
         return requestBuilder.build()
     }
 }
+
 
