@@ -98,7 +98,7 @@ public enum PhoenixMediaProviderError: PKError {
 // MARK: - PhoenixMediaProvider
 /************************************************************/
 
-@objc public class PhoenixMediaProvider: NSObject, MediaEntryProvider {
+@objc public class PhoenixMediaProvider: NSObject {
     
     @objc public var ks: String?
     @objc public var baseUrl: String?

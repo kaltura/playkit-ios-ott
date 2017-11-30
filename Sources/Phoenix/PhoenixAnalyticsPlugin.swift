@@ -82,15 +82,20 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
                                                                                         return nil
         }
         
-        requestBuilder.set { (response: Response) in
+        requestBuilder.set { [weak self] (response: Response) in
             PKLog.trace("Response: \(response)")
-            if response.statusCode == 0 {
-                PKLog.trace("\(String(describing: response.data))")
-                guard let data = response.data as? [String: Any] else { return }
-                guard let result = data["result"] as? [String: Any] else { return }
-                guard let errorData = result["error"] as? [String: Any] else { return }
-                guard let errorCode = errorData["code"] as? Int, errorCode == 4001 else { return }
-                self.reportConcurrencyEvent()
+            
+            guard let responseData = response.data else { return }
+            let ottResponse = try? OTTResponseParser.parse(data: responseData)
+            
+            if let error = ottResponse as? OTTError {
+                if error.code == "4001" {
+                    self?.reportConcurrencyEvent()
+                } else if error.code == "500016" {
+                    self?.reportKSExpiredEvent()
+                } else {
+                    
+                }
             }
         }
         

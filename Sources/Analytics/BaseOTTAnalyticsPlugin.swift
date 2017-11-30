@@ -217,6 +217,10 @@ public class BaseOTTAnalyticsPlugin: BasePlugin, OTTAnalyticsPluginProtocol, App
     func reportConcurrencyEvent() {
         self.messageBus?.post(OttEvent.Concurrency())
     }
+    
+    func reportKSExpiredEvent() {
+        self.messageBus?.post(OTTBackendErrorEvent.KSExpired())
+    }
 }
 
 /************************************************************/

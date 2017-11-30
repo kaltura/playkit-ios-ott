@@ -30,8 +30,8 @@ public enum PhoenixAnonymousSessionError: PKError {
     }
 }
 
-public class PhoenixAnonymousSession {
-    public class func get(baseUrl: String, partnerId: Int64, completion: @escaping (String?, Error?) -> Void) {
+@objc public class PhoenixAnonymousSession : NSObject {
+    @objc public class func get(baseUrl: String, partnerId: Int64, completion: @escaping (String?, Error?) -> Void) {
         if let b = OttUserService.anonymousLogin(baseURL: baseUrl, partnerId: partnerId) {
             b.set(completion: { (response) in
                 if let error = response.error {

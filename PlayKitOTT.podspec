@@ -12,5 +12,6 @@ Pod::Spec.new do |s|
   s.dependency 'PlayKit/Core'
   s.dependency 'PlayKit/AnalyticsCommon'
   s.dependency 'PlayKitUtils'
+  s.dependency 'KalturaNetKit'
 end
 

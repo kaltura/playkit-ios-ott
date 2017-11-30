@@ -1,7 +1,7 @@
 // ===================================================================================================
 // Copyright (C) 2017 Kaltura Inc.
 //
-// Licensed under the AGPLv3 license, unless a different license for a 
+// Licensed under the AGPLv3 license, unless a different license for a
 // particular library is specified in the applicable library path.
 //
 // You may obtain a copy of the License at
@@ -9,7 +9,13 @@
 // ===================================================================================================
 
 import UIKit
-import KalturaNetKit
+import PlayKit
 
-public protocol OTTBaseObject: KalturaBaseObject {
+/// OTT Event
+public class OTTBackendErrorEvent : PKEvent {
+    
+    class KSExpired : OTTBackendErrorEvent {}
+    
+    public static let ksExpired: OTTBackendErrorEvent.Type = KSExpired.self
 }
+

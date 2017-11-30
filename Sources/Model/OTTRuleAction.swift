@@ -18,7 +18,7 @@
 
 import Foundation
 import SwiftyJSON
-import PlayKit
+import KalturaNetKit
 
 enum OTTRuleActionType: String {
     case block = "BLOCK"
