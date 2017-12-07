@@ -11,14 +11,14 @@
 import UIKit
 import SwiftyJSON
 
-class OTTResponseParser: NSObject {
+public class OTTResponseParser: NSObject {
 
     enum OTTResponseParserError: Error {
         case typeNotFound
         case invalidJsonObject
     }
 
-    static func parse(data:Any) throws -> OTTBaseObject {
+    public static func parse(data:Any) throws -> OTTBaseObject {
 
         let jsonResponse = JSON(data)
         let resultObjectJSON = jsonResponse["result"].dictionaryObject
