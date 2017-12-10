@@ -18,19 +18,26 @@ public class OTTResponseParser: NSObject {
         case invalidJsonObject
     }
 
-    public static func parse(data:Any) throws -> OTTBaseObject {
-
-        let jsonResponse = JSON(data)
-        let resultObjectJSON = jsonResponse["result"].dictionaryObject
-        let objectType: OTTBaseObject.Type? = OTTObjectMapper.classByJsonObject(json: resultObjectJSON)
-        if let type = objectType, let resultJSON = resultObjectJSON {
-            if let object = type.init(json: resultJSON) {
+    public static func parse(data: Any) throws -> OTTBaseObject {
+        if let objectType = OTTObjectMapper.classByJsonObject(json: data) { //case when response is a part of multi request (no "result")
+            if let object = objectType.init(json: data) {
                 return object
             } else {
-              throw OTTResponseParserError.invalidJsonObject
+                throw OTTResponseParserError.invalidJsonObject
             }
         } else {
-            throw OTTResponseParserError.typeNotFound
+            let jsonResponse = JSON(data)
+            let resultObjectJSON = jsonResponse["result"].dictionaryObject
+            let objectType: OTTBaseObject.Type? = OTTObjectMapper.classByJsonObject(json: resultObjectJSON)
+            if let type = objectType, let resultJSON = resultObjectJSON {
+                if let object = type.init(json: resultJSON) {
+                    return object
+                } else {
+                    throw OTTResponseParserError.invalidJsonObject
+                }
+            } else {
+                throw OTTResponseParserError.typeNotFound
+            }
         }
     }
 }
