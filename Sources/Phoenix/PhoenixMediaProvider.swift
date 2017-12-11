@@ -143,7 +143,7 @@ public enum PhoenixMediaProviderError: PKError {
     /// - Parameter partnerId
     /// - Returns: Self
     @discardableResult
-    @nonobjc public func set(partnerId: Int64?) -> Self {
+    @nonobjc public func set(partnerId: Int?) -> Self {
         self.partnerId = NSNumber.init(value: partnerId ?? -1)
         return self
     }
@@ -258,7 +258,7 @@ public enum PhoenixMediaProviderError: PKError {
                 callback(nil, PhoenixMediaProviderError.invalidInputParam(param: "partnerId" ).asNSError)
                 return
             }
-            if let anonymousLoginRequest = getAnonymousLoginRequest(serverUrl: baseUrl, partnerId: partnerId.int64Value) {
+            if let anonymousLoginRequest = getAnonymousLoginRequest(serverUrl: baseUrl, partnerId: partnerId.intValue) {
                 ks = "{1:result:ks}"
                 requestBuilder.add(request: anonymousLoginRequest)
             }
@@ -317,7 +317,7 @@ public enum PhoenixMediaProviderError: PKError {
         return playbackContextRequest
     }
     
-    private func getAnonymousLoginRequest(serverUrl: String, partnerId: Int64) -> KalturaRequestBuilder? {
+    private func getAnonymousLoginRequest(serverUrl: String, partnerId: Int) -> KalturaRequestBuilder? {
         let anonymousLoginRequest = OttUserService.anonymousLogin(baseURL: serverUrl, partnerId: partnerId)
         anonymousLoginRequest?.set(completion: { (response) in
             if let data = response.data {

@@ -12,7 +12,7 @@ import KalturaNetKit
 
 public class OttUserService: NSObject {
 
-    public static func anonymousLogin(baseURL: String, partnerId: Int64, udid: String? = nil) -> KalturaRequestBuilder? {
+    public static func anonymousLogin(baseURL: String, partnerId: Int, udid: String? = nil) -> KalturaRequestBuilder? {
         if let request = KalturaRequestBuilder(url: baseURL, service: "ottUser", action: "anonymousLogin") {
             request.setBody(key: "partnerId", value: JSON(NSNumber.init(value: partnerId)))
 
