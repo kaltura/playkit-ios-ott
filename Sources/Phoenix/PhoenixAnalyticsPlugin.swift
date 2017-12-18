@@ -11,6 +11,7 @@
 import UIKit
 import KalturaNetKit
 import PlayKit
+import SwiftyJSON
 
 @objc public class PhoenixAnalyticsPluginConfig: OTTAnalyticsPluginConfig {
     
@@ -36,12 +37,30 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     
     public required init(player: Player, pluginConfig: Any?, messageBus: MessageBus) throws {
         try super.init(player: player, pluginConfig: pluginConfig, messageBus: messageBus)
-        guard let config = pluginConfig as? PhoenixAnalyticsPluginConfig else {
+        
+        var _config: PhoenixAnalyticsPluginConfig?
+        if let json = pluginConfig as? JSON {
+            _config = parse(json: json)
+        } else {
+            _config = pluginConfig as? PhoenixAnalyticsPluginConfig
+        }
+        
+        guard let config = _config else {
             PKLog.error("missing/wrong plugin config")
-            throw PKPluginError.missingPluginConfig(pluginName: PhoenixAnalyticsPlugin.pluginName)
+            throw PKPluginError.missingPluginConfig(pluginName: PhoenixAnalyticsPlugin.pluginName).asNSError
         }
         self.config = config
         self.interval = config.timerInterval
+    }
+    
+    private func parse(json: JSON) -> PhoenixAnalyticsPluginConfig? {
+        guard let jsonDictionary = json.dictionary else { return nil }
+        guard let baseUrl = jsonDictionary["baseUrl"]?.string,
+            let timerInterval = jsonDictionary["timerInterval"]?.double,
+            let ks = jsonDictionary["ks"]?.string,
+            let partnerId = jsonDictionary["partnerId"]?.int else { return nil }
+        
+        return PhoenixAnalyticsPluginConfig(baseUrl: baseUrl, timerInterval: timerInterval, ks: ks, partnerId: partnerId)
     }
     
     public override func onUpdateConfig(pluginConfig: Any) {
