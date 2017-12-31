@@ -23,6 +23,17 @@ import SwiftyJSON
         self.partnerId = partnerId
         super.init(baseUrl: baseUrl, timerInterval: timerInterval)
     }
+    
+    public static func parse(json: JSON) -> PhoenixAnalyticsPluginConfig? {
+        guard let jsonDictionary = json.dictionary else { return nil }
+        guard let baseUrl = jsonDictionary["baseUrl"]?.string,
+            let timerInterval = jsonDictionary["timerInterval"]?.double,
+            let ks = jsonDictionary["ks"]?.string,
+            let partnerId = jsonDictionary["partnerId"]?.int else { return nil }
+        
+        return PhoenixAnalyticsPluginConfig(baseUrl: baseUrl, timerInterval: timerInterval, ks: ks, partnerId: partnerId)
+    }
+    
 }
 
 public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
@@ -40,7 +51,7 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
         
         var _config: PhoenixAnalyticsPluginConfig?
         if let json = pluginConfig as? JSON {
-            _config = parse(json: json)
+            _config = PhoenixAnalyticsPluginConfig.parse(json: json)
         } else {
             _config = pluginConfig as? PhoenixAnalyticsPluginConfig
         }
@@ -51,16 +62,6 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
         }
         self.config = config
         self.interval = config.timerInterval
-    }
-    
-    private func parse(json: JSON) -> PhoenixAnalyticsPluginConfig? {
-        guard let jsonDictionary = json.dictionary else { return nil }
-        guard let baseUrl = jsonDictionary["baseUrl"]?.string,
-            let timerInterval = jsonDictionary["timerInterval"]?.double,
-            let ks = jsonDictionary["ks"]?.string,
-            let partnerId = jsonDictionary["partnerId"]?.int else { return nil }
-        
-        return PhoenixAnalyticsPluginConfig(baseUrl: baseUrl, timerInterval: timerInterval, ks: ks, partnerId: partnerId)
     }
     
     public override func onUpdateConfig(pluginConfig: Any) {
