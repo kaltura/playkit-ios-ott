@@ -46,8 +46,8 @@ public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
         }
     }
     
-    public required init(player: Player, pluginConfig: Any?, messageBus: MessageBus) throws {
-        try super.init(player: player, pluginConfig: pluginConfig, messageBus: messageBus)
+    public required init(player: Player, pluginConfig: Any?, messageBus: MessageBus, tokenReplacer: TokenReplacer?) throws {
+        try super.init(player: player, pluginConfig: pluginConfig, messageBus: messageBus, tokenReplacer: tokenReplacer)
         
         var _config: PhoenixAnalyticsPluginConfig?
         if let json = pluginConfig as? JSON {
