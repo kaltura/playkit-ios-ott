@@ -38,7 +38,7 @@ import SwiftyJSON
 
 public class PhoenixAnalyticsPlugin: BaseOTTAnalyticsPlugin {
     
-    public override class var pluginName: String { return "PhoenixAnalytics" }
+    public override class var pluginName: String { return "phoenixAnalytics" }
     
     var config: PhoenixAnalyticsPluginConfig! {
         didSet {
